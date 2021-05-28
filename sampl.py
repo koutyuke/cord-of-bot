@@ -17,7 +17,7 @@ client = discord.Client(intents=intents)
 
 
 # TOKEN読み込み
-TOKEN = "hoge"
+TOKEN = "hoge hoge hoge"
 
 #client = discord.Client()
 
