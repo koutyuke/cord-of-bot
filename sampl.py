@@ -20,10 +20,9 @@ client = discord.Client(intents=intents)
 
 
 # TOKEN読み込み
-TOKEN = "hoge-hoge-hoge"
+TOKEN = "hogehogehoge"
 
 #client = discord.Client()
-
 @client.event
 async def on_ready():
     await client.change_presence(activity=discord.Game(name = "Splatoon",type = 1))
@@ -34,8 +33,6 @@ urls = "https://splatoon.caxdb.com/schedule2.cgi"
 k1 = {1: "登録", 2: "登録", 3: "登録", 4: "登録", 5: "登録",6: "登録", 7: "登録", 8: "登録", "チーム分けメンバー": "あ"}
 team_wake_settei = {1: 5}
 member_touroku = {1:["登録なし","AYU","にこちゃん","登録なし","登録なし","登録なし","登録なし","登録なし"],2:[3,3,3,3,3,3,3,3]}
-
-
 
 ri_list = {
     "eng": ["🇦", "🇧", "🇨", "🇩", "🇪", "🇫", "🇬", "🇭", "🇮", "🇯", "🇰", "🇱", "🇲", "🇳", "🇴", "🇵", "🇶", "🇷", "🇸", "🇹", "🇺", "🇻", "🇼", "🇽", "🇾", "🇿"], #riaction_list[1]
@@ -393,10 +390,11 @@ async def on_message(message):
         reset()
         check_list = ["✔","✅","☑"]
         mooove[1] = 3
-        riaction_text = ""
         
         u = team_member()
-        m1 = messagee[1] = await message.channel.send(f"メンバーを登録するぞ‼\n登録したいメンバーのに対応する数字のリアクションを付けてくれ‼(複数選択可)\n{u}")
+        embed = discord.Embed(description = f"メンバーを登録するぞ‼\n登録したいメンバーのに対応する数字のリアクションを付けてくれ‼(複数選択可)\n{u}"
+        )
+        m1 = messagee[1] = await message.channel.send(embed = embed)
         
         for nen in range(10):
             await messagee[1].add_reaction(ri_list["num"][nen])
@@ -415,10 +413,11 @@ async def on_message(message):
                 henkou = range(10)
 
             for he in henkou:
-                await m1.delete()
-                m1 = messagee[1] = await message.channel.send(team_member())
+                try:await m1.delete()
+                except:pass
                 gg = he +1
-                m = messagee[1] = await message.channel.send(f"{gg} に登録したいメンバーの名前を送ってくれ‼\n(※登録したくないときには「登録なし」と送っていください。)")
+                embed = discord.Embed(description = f"{team_member()}\n{gg} に登録したいメンバーの名前を送ってくれ‼\n(※登録したくないときには「登録なし」と送っていください。)")
+                m = messagee[1] = await message.channel.send(embed = embed)
                 t = await client.wait_for("message", check = check)
                 members["member"][he] = t.content
                 await m.delete()
@@ -429,13 +428,15 @@ async def on_message(message):
                 us.append("登録なし")
             members["member"] = us
 
-            await m1.delete()
-            await message.channel.send(f"{team_member()}\n完了‼")
+            embed = discord.Embed(
+                description = f"{team_member()}\n完了‼"
+            )
+            await message.channel.send(embed = embed)
         elif ri_list["check"][1] == 2:
             await message.channel.send("メンバー登録をキャンセルしたぞ‼")
 
     elif message.content == "チームメンバー":
-        await message.channel.send("１人目　「" + members["member"][0] + "」\n２人目　「" + members["member"][1] + "」\n３人目　「" + members["member"][2] + "」\n４人目　「" + members["member"][3] + "」\n５人目　「" + members["member"][4] + "」\n６人目　「" + members["member"][5] + "」\n７人目　「" + members["member"][6] + "」\n８人目　「" + members["member"][7] + "」\n")
+        await message.channel.send(f"１：[{members['member'][0]}]\n２：[{members['member'][1]}]\n３：[{members['member'][2]}]\n４：[{members['member'][3]}]\n５：[{members['member'][4]}]\n６：[{members['member'][5]}]\n７：[{members['member'][6]}]\n８：[{members['member'][7]}]\n９：[{members['member'][8]}]\n10：[{members['member'][9]}]\n")
 
     elif message.content == "メンバーリセット":
         if message_tyouhuku_kaihi == 1:
@@ -637,15 +638,15 @@ async def on_message(message):
         await m.delete()
 
     elif message.content == "ぶき":
-
-        await message.channel.send("おすすめの武器は…\n\n「" + random.choice(buki) + "」\n\nだ!!")
+        embed = discord.Embed(description = f"おすすめの武器は…\n\n「{random.choice(buki)}」\n\nだ!!")
+        await message.channel.send(embed = embed)
 
     elif message.content == "チーム分け":
 
         if message_tyouhuku_kaihi == 1:
             return
-        
 
+        heikin["members"] = []
         team_member()
 
         i = len([i for i,x in enumerate(members["member"]) if not x == "登録なし" ])
@@ -733,7 +734,8 @@ async def on_message(message):
              #ロール付与
                 g = 0
                 ww = 0
-                m1 = messagee[1] = await message.channel.send("勝敗ポイントが同じになるチーム分けをするぞ‼\nボイスチャンネル移動を行うかどうかをリアクションを付けてくれ‼")
+                embed = discord.Embed(description = "勝敗ポイントが同じになるチーム分けをするぞ‼\nボイスチャンネル移動を行うかどうかをリアクションを付けてくれ‼")
+                m1 = messagee[1] = await message.channel.send(embed = embed)
 
                 mooove[1] = 1
 
@@ -751,7 +753,8 @@ async def on_message(message):
                 if ri_list["val"][0] == 1:
                     moving = 1
                     await m1.delete()
-                    m2 = await message.channel.send("ボイスチャンネル移動を行うことを確認したぞ‼\n移動のためにロールを付与するぞ‼\n")
+                    embed = discord.Embed(description = "ボイスチャンネル移動を行うことを確認したぞ‼\n移動のためにロールを付与するぞ‼\n")
+                    m2 = await message.channel.send(embed = embed)
 
                     while True:
                         discord_member = []
@@ -783,13 +786,15 @@ async def on_message(message):
                                         discord_member.append(nn) 
                                         wq += 1
 
-                        m3 = messagee[1] = await message.channel.send(abc + deg)
+                        embed = discord.Embed(description = abc + deg)
+                        m3 = messagee[1] = await message.channel.send(embed = embed)
 
                         mooove[1] = 3
                         reset()
                         kaisuu = 0
 
-                        m4 = messagee[1] =  await message.channel.send("\n登録したメンバーとdiscordユーザーを連結させます。\nまずチームメンバーを選択してください")
+                        embed = discord.Embed(description = "\n登録したメンバーとdiscordユーザーを連結させます。\nまずチームメンバーを選択してください")
+                        m4 = messagee[1] =  await message.channel.send(embed = embed)
 
                         o = [i for i,x in enumerate(members["member"]) if not x == "登録なし"]
                         for ji in o:
@@ -813,13 +818,13 @@ async def on_message(message):
                                 z = range(len(sa))
 
                             for yt in z:
-                                print(123)
-                                print(yt)
                                 
                                 if kaisuu != 0:
-                                    m3 = messagee[1] = await message.channel.send(abc + deg)
+                                    embed = discord.Embed(description = abc + deg)
+                                    m3 = messagee[1] = await message.channel.send(embed = embed)
 
-                                m5 = messagee[1] = await message.channel.send(f"{yt+1}：[{members['member'][yt]}]を確認しました。\n次にDiscordメンバーを選択してください")
+                                embed = discord.Embed(description = f"{yt+1}：[{members['member'][yt]}]を確認しました。\n次にDiscordメンバーを選択してください")
+                                m5 = messagee[1] = await message.channel.send(embed = embed)
                                 mooove[1] = 1
                                 reset()
 
@@ -882,12 +887,14 @@ async def on_message(message):
                             break                        
 
              #基礎ポイント
+                heikin["point"] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
                 delete_list = [m1, m2, m3,m4,m5]
                 for jf in delete_list:
                     try:await jf.delete()
                     except:pass
                 mem = len([i for i,x in enumerate(members["member"]) if not x == "登録なし"])
-                m6 = messagee[1] = await message.channel.send("\n基礎ポイントを上げるぞ‼\n<付与ポイント>\n1⃣：１ポイント\n2⃣：２ポイント\n3⃣：３ポイント\n")
+                embed = discord.Embed(description = "\n基礎ポイントを上げるぞ‼\n<付与ポイント>\n1⃣：１ポイント\n2⃣：２ポイント\n3⃣：３ポイント\n")
+                m6 = messagee[1] = await message.channel.send(embed = embed)
 
                 qp = ""
                 wq = 0
@@ -902,7 +909,8 @@ async def on_message(message):
 
                 while True:
 
-                    m7 = messagee[1] = await message.channel.send("<メンバーとポイント>\n" + qp )
+                    embed = discord.Embed(description = "<メンバーとポイント>\n" + qp )
+                    m7 = messagee[1] = await message.channel.send(embed = embed)
                     hanntei = 0
                     reset()
                     mooove[1] = 3
@@ -929,8 +937,10 @@ async def on_message(message):
                         for point in point_num:
 
                             if not hanntei == 0:
-                                m7 = await message.channel.send(f"<メンバーとポイント>\n{qp}")
-                            m8 = messagee[1]= await message.channel.send(f"[{point}]ポイントを確認しました。次に付与するメンバーのリアクションを押してください。")
+                                embed = discord.Embed(description =f"<メンバーとポイント>\n{qp}" )
+                                m7 = await message.channel.send(embed = embed)
+                            embed = discord.Embed(description =f"[{point}]ポイントを確認しました。次に付与するメンバーのリアクションを押してください。" )
+                            m8 = messagee[1]= await message.channel.send(embed = embed)
                             reset()
                             mooove[1] = 4
                             
@@ -990,13 +1000,11 @@ async def on_message(message):
                             for _ in range(1, 10000):
                                 
                                 c0 = random.sample(list(range(t)), t)
-
-
+                                
                                 if t >= 9:
                                     a = 4
                                     b = [4,8]
                                     #print(kansenn)
-                                    #
                                     kansenn = [heikin["members"][c0[i]] for i in range(8,t)]#ランダムでの観戦メンバー
                                     re = list( set(kansenn) & set(kansenn_list))
                                     if not len(re) == 0:
@@ -1041,13 +1049,15 @@ async def on_message(message):
                                         aa += f"[{str(team1[A])}]"
                                     for B in range(len(team2)):
                                         bb += f"[{str(team2[B])}]"
-
+                                    y = list(range(len(heikin["members"])))
                                     for po in range(max(heikin["point"])+1):
-                                        cs = [i for i,x in enumerate(heikin["point"]) if x == po]
+                                        cs = [i for i,x in enumerate(heikin["point"]) if x == po and i in y]
                                         if cs:
                                             cc += f"[{po}ポイント]\n｜"
                                             for css in cs:
-                                                cc += f"[{heikin['members'][css]}]"
+                                                try:cc += f"[{heikin['members'][css]}]"
+                                                except:print("error")
+
                                             cc += "\n"
 
                                     if t >= 9:
@@ -1064,8 +1074,8 @@ async def on_message(message):
                                         if len(kansenn_list) == t:
                                             kansenn_list = []
                                         
-
-                                    messagee[1] = await message.channel.send(f"チーム分けでのチーム編成は…\n\n<Aチーム>　{aa}\n\n<Bチーム>　{bb}\n\nチームの点差は　{poinntosa}だ‼\n\n<各ポイント>\n{cc}\n<リアクション>\n🇦：Aチームが勝った時\n🇧：Bチームが勝った時\n🇨：チーム分けのチャンネルに移動\n🇩：ロビーに移動")
+                                    embed = discord.Embed(description = f"チーム分けでのチーム編成は…\n\n<Aチーム>　{aa}\n\n<Bチーム>　{bb}\n\nチームの点差は　{poinntosa}だ‼\n\n<各ポイント>\n{cc}\n<リアクション>\n🇦：Aチームが勝った時\n🇧：Bチームが勝った時\n🇨：チーム分けのチャンネルに移動\n🇩：ロビーに移動")
+                                    messagee[1] = await message.channel.send(embed = embed)
                                     #移動やらなんやら
                                     while True:
                                         reset()
@@ -1092,7 +1102,8 @@ async def on_message(message):
                                                     heikin["point"][c0[gg]] += 1
                                                 try:await m9.delete()
                                                 except:pass
-                                                m9 = await message.channel.send("Aチームの勝利‼")
+                                                embed = discord.Embed(description = "Aチームの勝利‼")
+                                                m9 = await message.channel.send(embed = embed)
                                                 await messagee[1].delete()
                                                 dassyutu = 1
                                             
@@ -1101,7 +1112,8 @@ async def on_message(message):
                                                     heikin["point"][c0[gg]] += 1
                                                 try:await m9.delete()
                                                 except:pass
-                                                m9 = await message.channel.send("Bチームの勝利！")
+                                                embed = discord.Embed(description = "Bチームの勝利！")
+                                                m9 = await message.channel.send(embed = embed)
                                                 await messagee[1].delete()
                                                 dassyutu = 1
 
@@ -1126,7 +1138,8 @@ async def on_message(message):
 
                                         elif ri_list["check"][1] == 2:
                                             ww = 1
-                                            await message.channel.send("チーム分けを終了したぞ‼")
+                                            embed = discord.Embed(description = "チーム分けを終了したぞ‼")
+                                            await message.channel.send(embed = embed)
                                             break
                                         if dassyutu == 1:
                                             break
@@ -1288,14 +1301,11 @@ async def on_message(message):
             await message.channel.send("入室‼")
 
         elif message.author.voice.channel.members is not None and not message.guild.me in message.author.voice.channel.members:
-            print(1)
-            print()
             await message.guild.me.move_to(message.author.voice.channel)
             await message.channel.send("移動‼")
 
         else:
             await message.channel.send("既に同じチャンネルにいるぞ‼")
-            print(2)
 
     elif message.content == "leave":
         await message.guild.me.move_to(None)
